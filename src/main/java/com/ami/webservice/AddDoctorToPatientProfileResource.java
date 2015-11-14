@@ -48,7 +48,7 @@ public class AddDoctorToPatientProfileResource {
         //patient.setDoctor(doctor);
         patient.setDoctorName(doctor.getName());
         patient.setDoctorMailId(doctor.getEmail());
-        patient.setdId(doctor.getId());
+        patient.setPhone(doctor.getPhone());
         patientDAO.updatePatientWithDoctor(patient);
         patient = patientDAO.readPatient(patient);
         return Response.status(Response.Status.OK).entity(patient).build();

@@ -26,9 +26,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -37,6 +39,9 @@ import com.ami.dao.MongoDBPatientDAO;
 import com.ami.model.Food;
 import com.ami.model.Patient;
 import com.mongodb.MongoClient;
+import com.twilio.sdk.TwilioRestException;
+
+import utility.SmsSender;
 
 @Path("/food")
 @Produces("application/json")
@@ -122,8 +127,11 @@ public class GetFoodDetail {
 			}
 
 			List<String> IngredientTracesList = new ArrayList<String>();
+			String ingredientTrace=" ";
 			for (int i = 0; i < IngredientTraces.length(); i++) {
 				IngredientTracesList.add(IngredientTraces.get(i).toString());
+				ingredientTrace+=IngredientTraces.get(i).toString()+"\t";
+				
 			}
 			
 			System.out.println(product.toString() + "product");
@@ -138,8 +146,29 @@ public class GetFoodDetail {
 				f.setAllergyResult("Safe to consume");				
 				if (Allergy != null && Allergy.size() != 0) {
 					for (String a : Allergy) {
-						if (ingredientString.contains(a) || IngredientTracesList.contains(a))
-							f.setAllergyResult("Don't consume you are allergic to "+a); 
+
+						if ((org.apache.commons.lang3.StringUtils.containsIgnoreCase(ingredientString, a))|| (org.apache.commons.lang3.StringUtils.containsIgnoreCase(ingredientTrace, a)))                          
+						{	f.setAllergyResult("Don't consume you are allergic to "+a); 
+						/********************
+						 * SMS Notification
+						 ***********************************/
+						String pName = p.getFirstName();
+						String pEmail = p.getEmail();
+
+						String dEmail = p.getDoctorMailId();
+						
+						String dPhone = p.getdPhone();
+						List<NameValuePair> params = new ArrayList<NameValuePair>();
+						params.add(new BasicNameValuePair("To", "+1" + dPhone));
+						params.add(new BasicNameValuePair("From", "+16509341358"));
+						params.add(new BasicNameValuePair("Body", "This is SMS NOTIFICATION TO intimate allergic food take for PATIENT " + pName+" and email "+pEmail));
+						try {
+							SmsSender.sendSMS(params);
+						} catch (TwilioRestException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						}
 						
 					
 

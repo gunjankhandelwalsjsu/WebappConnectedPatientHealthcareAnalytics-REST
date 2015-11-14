@@ -144,6 +144,7 @@ public class ImageProcessing {
 	      response = builder.build();
 	    } else {
 	      response = Response.status(404).
+	    		  
 	          entity(" Unable to get file with ID: " + email).
 	          type("text/plain").
 	          build();

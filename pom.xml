@@ -14,6 +14,8 @@
     <jdk.version>1.7</jdk.version>
     <jersey.version>2.18</jersey.version>
   </properties>
+ 
+		
 
 
   <dependencies>
@@ -25,11 +27,17 @@
       <version>${jersey.version}</version>
     </dependency>
     <dependency>
-    
     <groupId>org.glassfish.jersey.containers</groupId>
     <artifactId>jersey-container-servlet</artifactId>
     <version>${jersey.version}</version>
 </dependency>
+
+ <dependency>
+	<groupId>com.twilio.sdk</groupId>
+	<artifactId>twilio-java-sdk</artifactId>
+	<version>5.4.0</version>
+</dependency>
+
    <dependency>
     <groupId>org.glassfish.jersey.media</groupId>
     <artifactId>jersey-media-multipart</artifactId>

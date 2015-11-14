@@ -24,7 +24,7 @@ public class Patient {
     List<String> disease;
     String doctorName;
     String doctorMailId;
-    String dId;
+    String dPhone;
     public String getImage() {
 		return image;
 	}
@@ -34,11 +34,11 @@ public class Patient {
 	}
 
 	public String getBirthDate() {
-		return BirthDate;
+		return birthDate;
 	}
 
 	public void setBirthDate(String birthDate) {
-		BirthDate = birthDate;
+		this.birthDate = birthDate;
 	}
 
 	public String getGender() {
@@ -50,7 +50,7 @@ public class Patient {
 	}
 
 	String image;
-    String BirthDate;
+    String birthDate;
     String Gender;
 
 
@@ -88,12 +88,12 @@ public class Patient {
         this.doctorMailId = doctorMailId;
     }
 
-    public String getdId() {
-        return dId;
+    public String getdPhone() {
+        return dPhone;
     }
 
-    public void setdId(String dId) {
-        this.dId = dId;
+    public void setdPhone(String dPhone) {
+        this.dPhone = dPhone;
     }
 
 
@@ -202,7 +202,7 @@ public class Patient {
                 ", email='" + email + '\'' +
                 ", doctorName='" + doctorName + '\'' +
                 ", doctorMailId='" + doctorMailId + '\'' +
-                ", dId='" + dId + '\'' +
+                ", dId='" + dPhone + '\'' +
                 ", allergy=" + allergy +
                 ", disease='" + disease + '\'' +
                 '}';

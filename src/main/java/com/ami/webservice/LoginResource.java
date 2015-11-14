@@ -87,17 +87,13 @@ public class LoginResource {
         	
         	        Response response;
         	        LOGGER.info("incoming patient info is :: " + patient);
-        	        String password = patient.getPassword();
-        	        String email = patient.getEmail();
-        	        String firstName = patient.getFirstName();
-        	        if ((email == null || email.equals("")) || (password == null || password.equals("")) || (firstName == null || firstName.equals(""))) {
-        	            return Response.status(Response.Status.BAD_REQUEST).entity("Mandatory params are missing").build();
-        	        }
+        	        
         	        MongoClient mongo = (MongoClient) WebAppContext.WEBAPP_CONTEXT.getAttribute("MONGO_CLIENT");
         	        MongoDBPatientDAO patientDAO = new MongoDBPatientDAO(mongo);
 
         	       
         	            patient = patientDAO.updatePatient(patient);
+        	            System.out.println("printing"+patient);
         	            return Response.status(Response.Status.CREATED).entity(patient).build();
         	        }
         	    

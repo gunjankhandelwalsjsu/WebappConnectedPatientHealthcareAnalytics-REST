@@ -25,12 +25,11 @@ public class PatientConverter {
 				.append("zipcode", p.getZipCode())
 				.append("phone", p.getPhone())
 				.append("email", p.getEmail())
-		        .append("d_name",p.getDoctorName())
-		        .append("d_mail_id",p.getDoctorMailId())
-		        .append("d_id",p.getdId())
-		        .append("image", p.getImage())
+		        .append("doctorName",p.getDoctorName())
+		        .append("doctorMailId",p.getDoctorMailId())
+		        .append("birthDate",p.getBirthDate())
+		        .append("dPhone",p.getdPhone())
 				.append("gender", p.getGender())
-				.append("allergy", p.getAllergy())
 		        .append("allergy", p.getAllergy())
                 .append("disease", p.getDisease());
 
@@ -53,10 +52,9 @@ public class PatientConverter {
 		p.setPhone((String) doc.get("phone"));
 		p.setEmail((String) doc.get("email"));
 		p.setCity((String) doc.get("city"));
-		p.setDoctorName((String) doc.get("d_name"));
-		p.setdId((String)doc.get("d_id"));
+		p.setDoctorName((String) doc.get("doctorName"));
+		p.setdPhone((String)doc.get("dPhone"));
 		p.setBirthDate((String) doc.get("birthDate"));
-		p.setImage((String) doc.get("image"));
 		p.setGender((String) doc.get("gender"));
 		
 		BasicDBList allergy = (BasicDBList) doc.get("allergy");
@@ -80,7 +78,7 @@ public class PatientConverter {
 		p.setDisease(dis);
 		
 		
-		p.setDoctorMailId((String) doc.get("d_mail_id"));
+		p.setDoctorMailId((String) doc.get("doctorMailId"));
 		ObjectId id = (ObjectId) doc.get("_id");
 		p.setId(id.toString());
 		return p;
