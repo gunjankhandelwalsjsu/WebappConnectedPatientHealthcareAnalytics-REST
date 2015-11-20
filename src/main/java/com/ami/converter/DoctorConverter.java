@@ -22,7 +22,9 @@ public class DoctorConverter {
 				.append("city", p.getCity())
 				.append("zipcode", p.getZipCode())
 				.append("phone", p.getPhone())
-				.append("email", p.getEmail());
+				.append("email", p.getEmail())
+		        .append("specialization", p.getSpecialization());
+
 		if(!p.getPatientEmail().equals(null))
              builder.append("patientEmail",p.getPatientEmail());
 
@@ -44,6 +46,7 @@ public class DoctorConverter {
 		p.setPhone((String) doc.get("phone"));
 		p.setEmail((String) doc.get("email"));
 		p.setCity((String) doc.get("city"));
+		p.setSpecialization((String) doc.get("specialization"));
 		p.setPatientEmail((List<String>) doc.get("patientEmail"));
 
 		ObjectId id = (ObjectId) doc.get("_id");
