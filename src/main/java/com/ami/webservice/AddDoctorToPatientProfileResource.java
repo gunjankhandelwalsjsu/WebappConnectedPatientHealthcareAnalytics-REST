@@ -10,6 +10,9 @@ import com.mongodb.MongoClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -32,20 +35,20 @@ public class AddDoctorToPatientProfileResource {
     @POST
     public Response attachDoctorToPatient(AddDoctorToPatientProfileModel addDoctorToPatientProfileModel) {
         Response response;
-        String patientId = addDoctorToPatientProfileModel.getPatienId();
-        String doctorId = addDoctorToPatientProfileModel.getDoctorId();
-        LOGGER.info("incoming patient id is :: " + patientId);
-        LOGGER.debug("incoming doctor id to attach is :: " + doctorId);
+        String patientEmail = addDoctorToPatientProfileModel.getPatientEmail();
+        String doctorEmail = addDoctorToPatientProfileModel.getDoctorEmail();
+        LOGGER.info("incoming patient id is :: " + patientEmail);
+        LOGGER.debug("incoming doctor id to attach is :: " + doctorEmail);
         MongoClient mongo = (MongoClient) WebAppContext.WEBAPP_CONTEXT.getAttribute("MONGO_CLIENT");
         MongoDBPatientDAO patientDAO = new MongoDBPatientDAO(mongo);
         MongoDBDoctorDAO doctorDAO = new MongoDBDoctorDAO(mongo);
         Doctor doctor = new Doctor();
-        doctor.setId(doctorId);
-        doctor = doctorDAO.readDoctor(doctor);
+        doctor.setEmail(doctorEmail);
+        doctor = doctorDAO.readDoctorfromEmail(doctor);
         Patient patient = new Patient();
-        patient.setId(patientId);
-        patient = patientDAO.readPatient(patient);
-        //patient.setDoctor(doctor);
+        patient.setEmail(patientEmail);
+        patient = patientDAO.readPatientfromEmail(patient);
+        System.out.println(doctor.getFirstName());
         patient.setDoctorName(doctor.getName());
         patient.setDoctorMailId(doctor.getEmail());
         patient.setPhone(doctor.getPhone());
@@ -55,8 +58,19 @@ public class AddDoctorToPatientProfileResource {
 
     }
     
+    @GET
+    @Path("/list")
+
+    public Response getListOfDoctors() {
+        Response response;
+        MongoClient mongo = (MongoClient) WebAppContext.WEBAPP_CONTEXT.getAttribute("MONGO_CLIENT");
+   
+        MongoDBDoctorDAO doctorDAO = new MongoDBDoctorDAO(mongo);
+        List<Doctor> doctors = doctorDAO.readAllDoctor();           
+        return Response.status(Response.Status.OK).entity(doctors).build();
     
     
+    }
     
 
 }

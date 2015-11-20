@@ -4,6 +4,13 @@ import java.util.List;
 
 public class Food {
 String productName;
+String sugarResult;
+public String getSugarResult() {
+	return sugarResult;
+}
+public void setSugarResult(String sugarResult) {
+	this.sugarResult = sugarResult;
+}
 public String getProductName() {
 	return productName;
 }

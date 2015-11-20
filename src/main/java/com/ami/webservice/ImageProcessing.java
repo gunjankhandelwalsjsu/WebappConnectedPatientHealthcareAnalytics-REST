@@ -40,7 +40,6 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 public class ImageProcessing {
 
 	 static Logger logger = Logger.getLogger(ImageProcessing.class);
-	   
 	  @POST
 	  @Path("/upload")
 	  @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -52,12 +51,13 @@ public class ImageProcessing {
 
 	   //   @FormDataParam("email") String email)
 	  {
+		  System.out.println("inside upload");
 		  
 			MongoClient mongo = (MongoClient) WebAppContext.WEBAPP_CONTEXT.getAttribute("MONGO_CLIENT");
 			DB mongoDB = mongo.getDB("journaldev");
 		  //   System.out.println("imgProcessing"+email);
 		    //Let's store the standard data in regular collection
-		    DBCollection collection = mongoDB.getCollection("imageCollection");
+		    DBCollection collection = mongoDB.getCollection("imageC");
 		     
 		    // Let's query to ensure ID does not already exist in Mongo
 		    // if it does, we will alert the user 

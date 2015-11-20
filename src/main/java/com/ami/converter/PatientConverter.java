@@ -70,8 +70,9 @@ public class PatientConverter {
 		
 		BasicDBList disease = (BasicDBList) doc.get("disease");
 		List<String> dis=new ArrayList<String>();
-		if(disease!=null && disease.size()>1){
+		if(disease!=null && disease.size()!=0){
 			for(int i = 0 ; i < disease.size(); i++) {
+				System.out.println("in converter"+allergy.get(i).toString());
 				dis.add(disease.get(i).toString());
 			}
 		}

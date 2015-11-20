@@ -102,4 +102,11 @@ public class MongoDBPatientDAO {
         this.col.update(query, PatientConverter.toDBObject(p));
     }
 
+	public Patient readPatientfromEmail(Patient patient) {
+		// TODO Auto-generated method stub
+		DBObject query = BasicDBObjectBuilder.start()
+                .append("email", patient.getEmail()).get();
+        DBObject data = this.col.findOne(query);
+        return PatientConverter.toPatient(data);	}
+
 }

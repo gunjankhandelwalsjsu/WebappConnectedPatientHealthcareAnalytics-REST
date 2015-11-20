@@ -58,6 +58,12 @@ public class MongoDBDoctorDAO {
 		return DoctorConverter.toDoctor(data);
 	}
 	
+	public Doctor readDoctorfromEmail(Doctor p) {
+		DBObject query = BasicDBObjectBuilder.start()
+				.append("email", p.getEmail()).get();
+		DBObject data = this.col.findOne(query);
+		return DoctorConverter.toDoctor(data);
+	}
 	
 	
 	public Boolean hasDoctor(String email) {

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +37,12 @@ import org.json.JSONObject;
 
 import com.ami.context.WebAppContext;
 import com.ami.dao.MongoDBPatientDAO;
+import com.ami.dao.MongoDBSugarDAO;
+import com.ami.dao.MongoDBTemperatureDAO;
 import com.ami.model.Food;
 import com.ami.model.Patient;
+import com.ami.model.SugarConsumed;
+import com.ami.model.Temperature;
 import com.mongodb.MongoClient;
 import com.twilio.sdk.TwilioRestException;
 
@@ -54,28 +59,23 @@ public class GetFoodDetail {
 		String SERVER_URL = "http://world.openfoodfacts.org/api/v0/product/" + barcode + ".json";
 		System.out.println(SERVER_URL);
 		Food f = new Food();
+		String sugarResult = "";
 		// method.getParams().setParameter(HttpMethodParams.RETRY_HANDLER, new
 		// DefaultHttpMethodRetryHandler(3, false));
 		MongoClient mongo = (MongoClient) WebAppContext.WEBAPP_CONTEXT.getAttribute("MONGO_CLIENT");
 		MongoDBPatientDAO patientDAO = new MongoDBPatientDAO(mongo);
 		Patient p = new Patient();
 		System.out.println(email);
-
 		p = patientDAO.getPatient(email);
 		System.out.println(p);
 		List<String> Allergy = new ArrayList<String>();
 		Allergy = p.getAllergy();
-		if(Allergy.size()==0)
-		System.out.println("allergy.."+Allergy.toString());
-		
+			
 		List<String> Disease = new ArrayList<String>();
 		Disease = p.getDisease();
-
+		
 		JSONObject object = new JSONObject();
-		for (int i = 0; i < Allergy.size(); i++) {
-			System.out.println("allergies" + Allergy.get(i));
-
-		}
+		
 
 		// System.out.println(resp);
 
@@ -102,12 +102,15 @@ public class GetFoodDetail {
 			f.setBrand("result doesnt exist");
 			f.setNutriments("result doesnt exist");
 			f.setAllergyResult("result doesnt exist");
+			
 			List<String> a = new ArrayList<String>();
 			a.add("result doesnt exist");
 			f.setPatientAllergy(a);
+			
 			List<String> b = new ArrayList<String>();
 			b.add("result doesnt exist");
 			f.setPatientDisease(b);
+			
 			return f;
 		} else {
 
@@ -117,9 +120,94 @@ public class GetFoodDetail {
 			JSONArray IngredientTraces = product.getJSONArray("traces_tags");
 			String brands = product.getString("brands");
 			JSONObject nutriments = product.getJSONObject("nutriments");
+			
+			String sugars=nutriments.getString("sugars");
+			System.out.println("sugarsssssss"+sugars);
+			if(!sugars.equals(null)){
+				 MongoDBSugarDAO sugarDAO = new MongoDBSugarDAO(mongo);
+				 java.util.Date date= new java.util.Date();
+				 if(!sugarDAO.hasSugar(email)){
+	      	 		   SugarConsumed tempObj=new SugarConsumed();
+	      	 		   List<String> sugarVal=new ArrayList<String>();
+	      	 		   System.out.println(sugars);
+	      	 		   sugarVal.add(sugars);
+	      	 		   tempObj.setSugar(sugarVal);
+	      	 		   System.out.println("print"+tempObj.getSugar().toString());
+	      	 		   tempObj.setEmail(email);
+	      	 		   List<Timestamp> timestampVal=new ArrayList<Timestamp>();
+	      	 		   String t=new Timestamp(date.getTime()).toString();
+	      	 		   String delims = "[ISODate()]";
+	      	 		   t.split(delims);
+	      	 		String dateString=t.substring(0, t.indexOf(' '));
+      	 	        String timeString=t. substring(t.indexOf(' ') + 1);
+	      	 		   timestampVal.add(new Timestamp(date.getTime()));
+	      	 		   tempObj.setTime(timestampVal);
+	      	 		   SugarConsumed temp = sugarDAO.createSugar(tempObj);
+	      	 		   
+	      	 		   
+	    	           //   return Response.status(Response.Status.CREATED).entity(temp).build();
+	      	 	   }
+	    	 		else
+	                 {
+	     	 		//System.out.println( temperatureDAO.hasTemperature(email));
+	    	 			SugarConsumed temp = sugarDAO.getSugar(email);
+	     	           temp.getSugar().add(sugars);
+	     	           String t=new Timestamp(date.getTime()).toString();
+	      	 		   String delims = "[ISODate()]";
+	      	 		   t.split(delims);
+	      	 		    String dateString=t.substring(0, t.indexOf(' '));
+	      	 	        String timeString=t. substring(t.indexOf(' ') + 1);
+	      	 		   System.out.println("I am hreeeeeee"+t);
+	    	           temp.getTime().add(new Timestamp(date.getTime()));
+	     	           sugarDAO.updateSugar(temp);	     	          
+
+	    	           int sugarTotal=0;
+	    	           
+	    	           for(int i=0;i<temp.getTime().size();i++)
+	    	           {
+		     	           String time=temp.getTime().get(i).toString();
+		     	           if(time.contains(dateString)){
+		     	        	    sugarTotal+=Integer.parseInt(temp.getSugar().get(i));
+		     	           }	    	        	   
+	    	           }
+	    	           int year=Integer.parseInt(p.getBirthDate().substring(0, 3));
+	    	           if((p.getGender().equals("F")&&(sugarTotal>22)&& (year<1997))||(p.getGender().equals("M")&&(sugarTotal>36)&&(year<1997))||((sugarTotal>12)&&(year>1997))){
+	    	        	   
+	    	        	   sugarResult="Exceeded the daily intake."+"\n"+" If you eat this "+product_name+" your sugar intake will reach to "+sugarTotal+"g";
+	    	        	   
+	    	        	   System.out.println("greate"+p.getGender());
+	    	        	   /********************
+							 * SMS Notification
+							 ***********************************/
+							String pName = p.getFirstName();
+							String pEmail = p.getEmail();
+
+							String dEmail = p.getDoctorMailId();
+							
+							String dPhone = p.getdPhone();
+							List<NameValuePair> params = new ArrayList<NameValuePair>();
+							params.add(new BasicNameValuePair("To", "+1" + dPhone));
+							params.add(new BasicNameValuePair("From", "+16509341358"));
+							params.add(new BasicNameValuePair("Body", "This is SMS NOTIFICATION TO intimate that PATIENT " + pName+" and email "+pEmail+ " is consuming high sugar"));
+							try {
+								SmsSender.sendSMS(params);
+							} catch (TwilioRestException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							}
+	    	           
+		          //  return Response.status(Response.Status.CREATED).entity(temp).build();
+
+	     	 	   }
+			}
+			
+			
+			
 			f.setProductName(product_name);
 			f.setBrand(brands);
 			f.setNutriments(nutriments.toString());
+			f.setSugarResult(sugarResult);
 			JSONArray states = product.getJSONArray("states_tags");
 			List<String> state = new ArrayList<String>();
 			for (int i = 0; i < states.length(); i++) {
@@ -199,4 +287,6 @@ public class GetFoodDetail {
 		return result;
 
 	}
+	
+	
 }

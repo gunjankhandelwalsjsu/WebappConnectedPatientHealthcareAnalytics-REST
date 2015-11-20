@@ -8,22 +8,20 @@ package com.ami.model;
  */
 public class AddDoctorToPatientProfileModel {
 
-    String patienId;
-    String doctorId;
+    String patientEmail;
+    public String getPatientEmail() {
+		return patientEmail;
+	}
+	public void setPatientEmail(String patienEmail) {
+		this.patientEmail = patienEmail;
+	}
+	public String getDoctorEmail() {
+		return doctorEmail;
+	}
+	public void setDoctorEmail(String doctorEmail) {
+		this.doctorEmail = doctorEmail;
+	}
+	String doctorEmail;
 
-    public String getPatienId() {
-        return patienId;
-    }
-
-    public void setPatienId(String patienId) {
-        this.patienId = patienId;
-    }
-
-    public String getDoctorId() {
-        return doctorId;
-    }
-
-    public void setDoctorId(String doctorId) {
-        this.doctorId = doctorId;
-    }
+   
 }
