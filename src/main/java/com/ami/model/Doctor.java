@@ -2,9 +2,7 @@ package com.ami.model;
 
 import java.util.List;
 
-/**
- * Created by Aishwarya on 10/29/2015.
- */
+
 public class Doctor {
 
 	private String id;
@@ -30,15 +28,15 @@ public class Doctor {
 		}
 
 	
-    public String getSpecialization() {
+    public List<String> getSpecialization() {
 		return specialization;
 	}
 
-	public void setSpecialization(String specialization) {
-		this.specialization = specialization;
+	public void setSpecialization(List<String> spec) {
+		this.specialization = spec;
 	}
 
-	String specialization;
+	List<String> specialization;
 
 	
 	public String getId() {

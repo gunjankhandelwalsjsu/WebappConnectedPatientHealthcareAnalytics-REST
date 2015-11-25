@@ -7,9 +7,16 @@ import com.ami.model.AddDoctorToPatientProfileModel;
 import com.ami.model.Doctor;
 import com.ami.model.Patient;
 import com.mongodb.MongoClient;
+import com.twilio.sdk.TwilioRestException;
+
+import utility.SmsSender;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -54,8 +61,26 @@ public class AddDoctorToPatientProfileResource {
         patient.setPhone(doctor.getPhone());
         patientDAO.updatePatientWithDoctor(patient);
         patient = patientDAO.readPatient(patient);
-        return Response.status(Response.Status.OK).entity(patient).build();
+        /********************
+		 * SMS Notification
+		 ***********************************/
+		String pName = patient.getFirstName();
+		String pEmail = patient.getEmail();
 
+		String dEmail = patient.getDoctorMailId();
+		
+		String dPhone = patient.getdPhone();
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("To", "+1" + dPhone));
+		params.add(new BasicNameValuePair("From", "+16509341358"));
+		params.add(new BasicNameValuePair("Body", "This is SMS NOTIFICATION TO intimate that PATIENT " + pName+" and email "+pEmail+"has added you as a doctor"));
+		try {
+			SmsSender.sendSMS(params);
+		} catch (TwilioRestException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}	
+        return Response.status(Response.Status.OK).entity(patient).build();
     }
     
     @GET

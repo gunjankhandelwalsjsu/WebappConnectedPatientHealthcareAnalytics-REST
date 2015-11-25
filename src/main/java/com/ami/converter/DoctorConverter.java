@@ -1,10 +1,12 @@
 package com.ami.converter;
 
 import com.ami.model.Doctor;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 import org.bson.types.ObjectId;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DoctorConverter {
@@ -46,8 +48,23 @@ public class DoctorConverter {
 		p.setPhone((String) doc.get("phone"));
 		p.setEmail((String) doc.get("email"));
 		p.setCity((String) doc.get("city"));
-		p.setSpecialization((String) doc.get("specialization"));
+		//p.setSpecialization((String) doc.get("specialization"));
 		p.setPatientEmail((List<String>) doc.get("patientEmail"));
+		
+		
+		
+		
+		BasicDBList specialization = (BasicDBList) doc.get("specialization");
+		List<String> spec = new ArrayList<String>();
+		if (specialization != null && specialization.size() != 0) {
+
+			for (int i = 0; i < specialization.size(); i++) {
+				spec.add(specialization.get(i).toString());
+			}
+		}  
+		else
+			spec.add("No specialization");
+		p.setSpecialization(spec);
 
 		ObjectId id = (ObjectId) doc.get("_id");
 		p.setId(id.toString());

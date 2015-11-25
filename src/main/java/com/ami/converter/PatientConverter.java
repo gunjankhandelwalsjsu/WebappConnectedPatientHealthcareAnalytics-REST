@@ -72,7 +72,7 @@ public class PatientConverter {
 		List<String> dis=new ArrayList<String>();
 		if(disease!=null && disease.size()!=0){
 			for(int i = 0 ; i < disease.size(); i++) {
-				System.out.println("in converter"+allergy.get(i).toString());
+				System.out.println("in converter"+disease.get(i).toString());
 				dis.add(disease.get(i).toString());
 			}
 		}

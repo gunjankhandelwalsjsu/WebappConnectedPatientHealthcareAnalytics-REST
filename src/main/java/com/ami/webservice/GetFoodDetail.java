@@ -208,11 +208,11 @@ public class GetFoodDetail {
 			f.setBrand(brands);
 			f.setNutriments(nutriments.toString());
 			f.setSugarResult(sugarResult);
-			JSONArray states = product.getJSONArray("states_tags");
+		/*	JSONArray states = product.getJSONArray("states_tags");
 			List<String> state = new ArrayList<String>();
 			for (int i = 0; i < states.length(); i++) {
 				state.add(states.get(i).toString());
-			}
+			}*/
 
 			List<String> IngredientTracesList = new ArrayList<String>();
 			String ingredientTrace=" ";
@@ -223,14 +223,14 @@ public class GetFoodDetail {
 			}
 			
 			System.out.println(product.toString() + "product");
-			if (state.contains("en:ingredients-completed")) {
-				System.out.println("true");
+		/*	if (state.contains("en:ingredients-completed")) {
+				System.out.println("true");*/
 				String ingredientString = product.getString("ingredients_text");
 				String[] ingredients = ingredientString.split(",");
 				for (String i : ingredients) {
 					System.out.println(i);
 					System.out.println("Sending......................");
-				}
+				
 				f.setAllergyResult("Safe to consume");				
 				if (Allergy != null && Allergy.size() != 0) {
 					for (String a : Allergy) {

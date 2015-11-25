@@ -21,10 +21,7 @@ public class SmsSender {
 		TwilioRestClient client = new TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN); 
 	 
 		 // Build the parameters 
-		 List<NameValuePair> params = new ArrayList<NameValuePair>(); 
-		 params.add(new BasicNameValuePair("To", "+14086146313")); 
-		 params.add(new BasicNameValuePair("From", "+16509341358")); 
-		 params.add(new BasicNameValuePair("Body", "hii"));   
+		
 	 
 		 MessageFactory messageFactory = client.getAccount().getMessageFactory(); 
 		 Message message = messageFactory.create(parameter); 
