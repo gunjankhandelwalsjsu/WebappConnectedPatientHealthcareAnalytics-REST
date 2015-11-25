@@ -13,6 +13,13 @@
         <param-name>MONGODB_PORT</param-name>
         <param-value>27017</param-value>
     </context-param>
+    
+    <context-param>
+		<param-name>mongoURI</param-name>
+		<param-value>
+		         mongodb://gunjan:khandelwal@ds059284.mongolab.com:59284/journaldev
+ 		</param-value>
+	</context-param>
 
     <listener>
         <listener-class>com.ami.context.WebAppContext</listener-class>

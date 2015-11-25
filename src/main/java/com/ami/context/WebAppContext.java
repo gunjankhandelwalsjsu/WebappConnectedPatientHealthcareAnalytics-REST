@@ -8,6 +8,9 @@ package com.ami.context;
  */
 
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.MongoURI;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,15 +38,21 @@ public class WebAppContext implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         LOGGER.debug("Web-App Context initializing");
         WEBAPP_CONTEXT = sce.getServletContext();
+     //   MongoClient mongo = null;
+        String textUri = WEBAPP_CONTEXT.getInitParameter("mongoURI");
+        MongoClientURI uri = new MongoClientURI(textUri);
         MongoClient mongo = null;
-        try {
+		mongo = new MongoClient(uri);
+        
+        
+      /*  try {
             mongo = new MongoClient(
                     WEBAPP_CONTEXT.getInitParameter("MONGODB_HOST"),
                     Integer.parseInt(WEBAPP_CONTEXT.getInitParameter("MONGODB_PORT")));
         } catch (UnknownHostException e) {
             LOGGER.error("exception in mongo init : " + e.getMessage());
             throw new RuntimeException("MongoClient init failed");
-        }
+        }*/
         LOGGER.debug("MongoClient initialized successfully");
         WEBAPP_CONTEXT.setAttribute("MONGO_CLIENT", mongo);
         LOGGER.debug("web-app initialization successful");
