@@ -17,7 +17,7 @@
     <context-param>
 		<param-name>mongoURI</param-name>
 		<param-value>
-		         mongodb://gunjan:khandelwal@ds059284.mongolab.com:59284/journaldev
+             mongodb://gunjan:khandelwal@ds059284.mongolab.com:59284/journaldev?authMode=scram-sha1
  		</param-value>
 	</context-param>
 

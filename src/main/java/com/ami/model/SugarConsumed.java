@@ -6,13 +6,13 @@ import java.util.List;
 public class SugarConsumed {
 
 	String email;
-	public List<Timestamp> getTime() {
+	public List<String> getTime() {
 		return time;
 	}
-	public void setTime(List<Timestamp> time) {
+	public void setTime(List<String> time) {
 		this.time = time;
 	}
-	List<Timestamp> time;
+	List<String> time;
 	public void setSugar(List<String> sugar) {
 		this.sugar = sugar;
 	}

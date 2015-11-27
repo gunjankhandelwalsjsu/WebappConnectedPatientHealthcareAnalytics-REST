@@ -52,6 +52,13 @@ List<String> PatientAllergy;
 List<String> PatientDisease;
 String nutriments;
 String AllergyResult;
+String ingredients;
+public String getIngredients() {
+	return ingredients;
+}
+public void setIngredients(String ingredients) {
+	this.ingredients = ingredients;
+}
 @Override
 public String toString() {
 	return "Food [productName=" + productName + ", brand=" + brand + ", PatientAllergy=" + PatientAllergy

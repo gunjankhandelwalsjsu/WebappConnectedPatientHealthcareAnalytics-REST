@@ -9,7 +9,10 @@ import com.mongodb.DBObject;
 import org.bson.types.ObjectId;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -44,11 +47,13 @@ public class SugarConverter {
 		t.setSugar(temp);
 		
 		BasicDBList time = (BasicDBList) doc.get("time");
-		List<Timestamp> ti=new ArrayList<Timestamp>();
+		List<String> ti=new ArrayList<String>();
 		if(time!=null && time.size()!=0){
 			for(int i = 0 ; i < time.size(); i++) {
-				Date tstamp=(Date) time.get(i);
-			    Timestamp timestamp = new java.sql.Timestamp(tstamp.getTime());
+				 DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				 Calendar cal = Calendar.getInstance();
+				 
+				 String timestamp = String.valueOf(dateFormat.format(cal.getTime()));
 				ti.add(timestamp);
 				System.out.println("adding time"+ti.toString());
 			}
