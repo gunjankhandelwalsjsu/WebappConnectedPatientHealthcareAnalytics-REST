@@ -124,14 +124,14 @@ public class GetFoodDetailNutritionix {
 							sugarTotal += Float.parseFloat(temp.getSugar().get(i1));
 						}
 					}
-					int year = Integer.parseInt(p.getBirthDate().substring(0, 3));
-					if ((p.getGender().equals("F") && (sugarTotal > 22) && (year < 1997))
-							|| (p.getGender().equals("M") && (sugarTotal > 36) && (year < 1997))
+					int year = Integer.parseInt(p.getBirthDate().substring(0, 4));
+					if ((p.getGender().equals("Female") && (sugarTotal > 22) && (year < 1997))
+							|| (p.getGender().equals("Male") && (sugarTotal > 36) && (year < 1997))
 							|| ((sugarTotal > 12) && (year > 1997))) {
 
 						sugarResult = "Exceeded the daily intake." + "\n" + " If you eat this " + f.getProductName()
 								+ " your sugar intake will reach to " + sugarTotal + "g";
-
+System.out.println("inside twillio");
 						/********************
 						 * SMS Notification
 						 ***********************************/
@@ -166,56 +166,66 @@ public class GetFoodDetailNutritionix {
 				/*****************
 				 * Checking Ingredients and generating allergy Result
 				 *****************/
-
+                    Boolean flag=false;
 					String ingredientString = f.getIngredients();
                     if(!ingredientString.equals(null)){
-					if (Allergy != null && Allergy.size() != 0) {
-						for (String a : Allergy) {
+                    	if (Allergy != null && Allergy.size() != 0) {
+    						for (String a : Allergy) {
 
-							if (org.apache.commons.lang3.StringUtils.containsIgnoreCase(ingredientString, a))
-									{
-								f.setAllergyResult("Don't consume you are allergic to " + a);
-								/********************
-								 * SMS Notification
-								 ***********************************/
-								String pName = p.getFirstName();
-								String pEmail = p.getEmail();
+    							if ((org.apache.commons.lang3.StringUtils.containsIgnoreCase(ingredientString, a))
+    									|| (org.apache.commons.lang3.StringUtils.containsIgnoreCase(ingredientTrace, a))) {
+    								
+    								flag=true;//break out of if statement
+    								break;
+    								
+    							}
+    						
+    								else{
+    									System.out.println("No Plese");
+    									f.setAllergyResult("Safe to consume");
+    								}
+    						}
+    							if (flag==true){
+    								f.setAllergyResult("Don't consume you are allergic to it");
+    						
+    								System.out.println("I hv reached in this block");	/********************
+    								 * SMS Notification
+    								 ***********************************/
+    								String pName = p.getFirstName();
+    								String pEmail = p.getEmail();
 
-								String dEmail = p.getDoctorMailId();
+    								String dEmail = p.getDoctorMailId();
 
-								String dPhone = p.getdPhone();
-								List<NameValuePair> params = new ArrayList<NameValuePair>();
-								params.add(new BasicNameValuePair("To", "+1" + dPhone));
-								params.add(new BasicNameValuePair("From", "+16509341358"));
-								params.add(new BasicNameValuePair("Body",
-										"This is SMS NOTIFICATION TO intimate allergic food take for PATIENT " + pName
-												+ " and email " + pEmail));
-								try {
-									SmsSender.sendSMS(params);
-								} catch (TwilioRestException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-							}
+    								String dPhone = p.getdPhone();
+    								List<NameValuePair> params = new ArrayList<NameValuePair>();
+    								params.add(new BasicNameValuePair("To", "+1" + dPhone));
+    								params.add(new BasicNameValuePair("From", "+16509341358"));
+    								params.add(new BasicNameValuePair("Body",
+    										"This is SMS NOTIFICATION TO intimate allergic food take for PATIENT " + pName
+    												+ " and email " + pEmail));
+    								try {
+    									SmsSender.sendSMS(params);
+    								} catch (TwilioRestException e1) {
+    									// TODO Auto-generated catch block
+    									e1.printStackTrace();
+    								}
+    							}
+    							else
+    								f.setAllergyResult("Safe to consume");
+    					}				
 
-							else
-								f.setAllergyResult("Safe to consume");
+    				}
+    				else{
+    					f.setAllergyResult("No information available");
+    					
+    				}
+    			
 
-						}
+    			System.out.println(f.toString());
 
-					}
+    		
+    		return f;
 
-				}
-				else{
-					f.setAllergyResult("No information available");
-					
-				}
-			
-f.setNutriments("No information available");
-
-		
-		return f;
-
-}
+    	}
 
 }

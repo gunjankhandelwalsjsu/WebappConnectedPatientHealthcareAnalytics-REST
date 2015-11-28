@@ -76,8 +76,9 @@ public class GetFoodDetail {
 		String ingredientTrace = " ";
 		List<String> Disease = new ArrayList<String>();
 		Disease = p.getDisease();
-
+        Boolean flag=false;
 		JSONObject object = new JSONObject();
+		float sugarTotal = 0;
 
 		// System.out.println(resp);
 
@@ -152,9 +153,15 @@ public class GetFoodDetail {
 					JSONObject nutriments = product.getJSONObject("nutriments");
 					f.setNutriments(nutriments.toString());
 					sugars = nutriments.getString("sugars");
+					System.out.println("I am sugar"+sugars);
+					break;
 
 				}else 
+				{
+					System.out.println("By chance");
+				
 					f.setNutriments("No information available");
+				}
 					
 				
 
@@ -162,7 +169,7 @@ public class GetFoodDetail {
 
 			/*********************************************/
 			/***************** Checking sugars *****************/
-			if (!sugars.equals(" ")) {
+			if (!sugars.equals("null")||!(sugars.equals(" "))) {
 				MongoDBSugarDAO sugarDAO = new MongoDBSugarDAO(mongo);
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 				Calendar cal = Calendar.getInstance();
@@ -171,7 +178,7 @@ public class GetFoodDetail {
 				if (!sugarDAO.hasSugar(email)) {
 					SugarConsumed tempObj = new SugarConsumed();
 					List<String> sugarVal = new ArrayList<String>();
-					System.out.println(sugars);
+					System.out.println("sugars are here"+sugars);
 					sugarVal.add(sugars);
 					tempObj.setSugar(sugarVal);
 					System.out.println("print" + tempObj.getSugar().toString());
@@ -196,13 +203,13 @@ public class GetFoodDetail {
 					SugarConsumed temp = sugarDAO.getSugar(email);
 					temp.getSugar().add(sugars);
 					String t = String.valueOf(dateFormat.format(cal.getTime()));
+					System.out.println(" repeared sugars are here"+sugars);
 
 					String dateString = t.substring(0, t.indexOf(' '));
 					String timeString = t.substring(t.indexOf(' ') + 1);
 					temp.getTime().add(String.valueOf(dateFormat.format(cal.getTime())));
 					sugarDAO.updateSugar(temp);
 
-					float sugarTotal = 0;
 
 					for (int i1 = 0; i1 < temp.getTime().size(); i1++) {
 						String time = temp.getTime().get(i1).toString();
@@ -211,9 +218,12 @@ public class GetFoodDetail {
 							sugarTotal += Float.parseFloat(temp.getSugar().get(i1));
 						}
 					}
-					int year = Integer.parseInt(p.getBirthDate().substring(0, 3));
-					if ((p.getGender().equals("F") && (sugarTotal > 22) && (year < 1997))
-							|| (p.getGender().equals("M") && (sugarTotal > 36) && (year < 1997))
+					int year = Integer.parseInt(p.getBirthDate().substring(0, 4));
+					System.out.println(p.getBirthDate()+"my birth date"+year);
+					
+					System.out.println("sugarTotalssssss"+sugarTotal);
+					if ((p.getGender().equals("Female") && (sugarTotal > 22) && (year < 1997))
+							|| (p.getGender().equals("Male") && (sugarTotal > 36) && (year < 1997))
 							|| ((sugarTotal > 12) && (year > 1997))) {
 
 						sugarResult = "Exceeded the daily intake." + "\n" + " If you eat this " + product_name
@@ -275,8 +285,22 @@ public class GetFoodDetail {
 
 							if ((org.apache.commons.lang3.StringUtils.containsIgnoreCase(ingredientString, a))
 									|| (org.apache.commons.lang3.StringUtils.containsIgnoreCase(ingredientTrace, a))) {
-								f.setAllergyResult("Don't consume you are allergic to " + a);
-								/********************
+								
+								flag=true;//break out of if statement
+								break;
+								
+							}
+						
+								else{
+									System.out.println("No Plese");
+									f.setAllergyResult("Safe to consume");
+								}
+						}
+					
+							if (flag==true){
+								f.setAllergyResult("Don't consume you are allergic to it");
+						
+								System.out.println("I hv reached in this block");	/********************
 								 * SMS Notification
 								 ***********************************/
 								String pName = p.getFirstName();
@@ -298,13 +322,14 @@ public class GetFoodDetail {
 									e1.printStackTrace();
 								}
 							}
-
 							else
 								f.setAllergyResult("Safe to consume");
-
-						}
-
 					}
+
+							
+
+
+					
 
 				}
 				else{

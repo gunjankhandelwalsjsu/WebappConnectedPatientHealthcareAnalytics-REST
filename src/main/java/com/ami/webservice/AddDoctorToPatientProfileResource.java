@@ -58,7 +58,7 @@ public class AddDoctorToPatientProfileResource {
         System.out.println(doctor.getFirstName());
         patient.setDoctorName(doctor.getName());
         patient.setDoctorMailId(doctor.getEmail());
-        patient.setPhone(doctor.getPhone());
+        patient.setdPhone(doctor.getPhone());
         patientDAO.updatePatientWithDoctor(patient);
         patient = patientDAO.readPatient(patient);
         /********************
@@ -70,6 +70,7 @@ public class AddDoctorToPatientProfileResource {
 		String dEmail = patient.getDoctorMailId();
 		
 		String dPhone = patient.getdPhone();
+		System.out.println(dPhone);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("To", "+1" + dPhone));
 		params.add(new BasicNameValuePair("From", "+16509341358"));

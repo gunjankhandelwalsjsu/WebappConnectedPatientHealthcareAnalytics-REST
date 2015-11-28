@@ -22,10 +22,8 @@ public class MongoDBSugarDAO {
 	  private DBCollection col;
 
 	    public MongoDBSugarDAO(MongoClient mongo) {
-	        System.out.println("M I being called");
 
 	        this.col = mongo.getDB("journaldev").getCollection("Sugars");
-	        System.out.println("crweated");
 	    }
 
 	    public SugarConsumed createSugar(SugarConsumed t) {
@@ -60,7 +58,6 @@ public class MongoDBSugarDAO {
 	        BasicDBObject query = new BasicDBObject();
 	        query.put("email", email);
 	        DBObject data = this.col.findOne(query);
-	        System.out.println(data+email);
 	        if (data == null)
 	            return false;
 	        else
