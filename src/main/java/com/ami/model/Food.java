@@ -3,6 +3,12 @@ package com.ami.model;
 import java.util.List;
 
 public class Food {
+@Override
+	public String toString() {
+		return "Food [productName=" + productName + ", sugarResult=" + sugarResult + ", brand=" + brand
+				+ ", PatientAllergy=" + PatientAllergy + ", PatientDisease=" + PatientDisease + ", nutriments="
+				+ nutriments + ", AllergyResult=" + AllergyResult + ", ingredients=" + ingredients + "]";
+	}
 String productName;
 String sugarResult;
 public String getSugarResult() {
@@ -59,10 +65,5 @@ public String getIngredients() {
 public void setIngredients(String ingredients) {
 	this.ingredients = ingredients;
 }
-@Override
-public String toString() {
-	return "Food [productName=" + productName + ", brand=" + brand + ", PatientAllergy=" + PatientAllergy
-			+ ", PatientDisease=" + PatientDisease + ", nutriments=" + nutriments + ", AllergyResult=" + AllergyResult
-			+ "]";
-}
+
 }

@@ -32,12 +32,16 @@ public class NutritionixConverter {
 		Food p = new Food();
 		p.setBrand((String) doc.get("brand_name"));
 		p.setIngredients((String) doc.get("nf_ingredient_statement"));
-		String s=(String) doc.get("nf_sugars");
-           if(s.equals("null"))		
+		Object o=doc.get("nf_sugars");
+		if(!o.equals(null)){
+		int i=(Integer) doc.get("nf_sugars");
+		String s=String.valueOf(i);
+           if(!s.equals("null"))		
            {
    			System.out.println("reached");
 
-	          p.setNutriments((String) doc.get("nf_sugars"));
+	          p.setNutriments(s);
+		}
 		}
 		else{
 			

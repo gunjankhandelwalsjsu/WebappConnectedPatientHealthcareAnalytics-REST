@@ -28,8 +28,7 @@ public class GetFoodDetailNutritionix {
 	String barcode;
 	Food f=new Food();
 	String email;
-	List<String> Allergy = new ArrayList<String>();
-	
+	List<String> Allergy = new ArrayList<String>();	
 	List<String> Disease = new ArrayList<String>();
 	Patient p;
 
@@ -42,10 +41,11 @@ public class GetFoodDetailNutritionix {
 	}
       Food foodFunction(){
     	  String sugars = " ";
-  		 String sugarResult = "";
+  		  String sugarResult = "";
    	      String ingredientTrace = " ";
-    	  f.setPatientAllergy(Allergy);
-			f.setPatientDisease(Disease);
+
+    	  
+
     	  MongoClient mongo = (MongoClient) WebAppContext.WEBAPP_CONTEXT.getAttribute("MONGO_CLIENT");
           MongoDBNutritionixDAO nutritionDAO = new MongoDBNutritionixDAO(mongo);
           if(!nutritionDAO.hasFood(barcode)){
@@ -66,8 +66,7 @@ public class GetFoodDetailNutritionix {
 			                                                    *****************/
 
 			
-					sugars = f.getNutriments();
-				
+					sugars = f.getNutriments();				
 					System.out.println("sugars"+sugars);
 				
 
@@ -75,7 +74,7 @@ public class GetFoodDetailNutritionix {
 
 			/*********************************************/
 			/***************** Checking sugars *****************/
-			if (!sugars.equals("null")) {
+					if (!sugars.equals("null")||!(sugars.equals(" "))&&!sugars.equals("No information available")) {
 				MongoDBSugarDAO sugarDAO = new MongoDBSugarDAO(mongo);
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 				Calendar cal = Calendar.getInstance();
@@ -120,7 +119,7 @@ public class GetFoodDetailNutritionix {
 					for (int i1 = 0; i1 < temp.getTime().size(); i1++) {
 						String time = temp.getTime().get(i1).toString();
 						if (time.contains(dateString)) {
-							if(!temp.getSugar().get(i1).equals(" "))
+							if(!temp.getSugar().get(i1).equals(" ")&&!temp.getSugar().get(i1).equals("No information available")&&!temp.getSugar().get(i1).equals("null"))
 							sugarTotal += Float.parseFloat(temp.getSugar().get(i1));
 						}
 					}
@@ -131,7 +130,6 @@ public class GetFoodDetailNutritionix {
 
 						sugarResult = "Exceeded the daily intake." + "\n" + " If you eat this " + f.getProductName()
 								+ " your sugar intake will reach to " + sugarTotal + "g";
-System.out.println("inside twillio");
 						/********************
 						 * SMS Notification
 						 ***********************************/
@@ -153,12 +151,12 @@ System.out.println("inside twillio");
 							e1.printStackTrace();
 						}
 					}
-
-					// return
-					// Response.status(Response.Status.CREATED).entity(temp).build();
-
 				}
 			}
+			else {
+				sugarResult="No information available";
+			}
+			System.out.println("Inside sugarResult"+sugarResult);
 
 			f.setSugarResult(sugarResult);
 
@@ -181,21 +179,18 @@ System.out.println("inside twillio");
     							}
     						
     								else{
-    									System.out.println("No Plese");
     									f.setAllergyResult("Safe to consume");
     								}
     						}
     							if (flag==true){
     								f.setAllergyResult("Don't consume you are allergic to it");
     						
-    								System.out.println("I hv reached in this block");	/********************
+    						/********************
     								 * SMS Notification
     								 ***********************************/
     								String pName = p.getFirstName();
     								String pEmail = p.getEmail();
-
     								String dEmail = p.getDoctorMailId();
-
     								String dPhone = p.getdPhone();
     								List<NameValuePair> params = new ArrayList<NameValuePair>();
     								params.add(new BasicNameValuePair("To", "+1" + dPhone));
@@ -213,19 +208,16 @@ System.out.println("inside twillio");
     							else
     								f.setAllergyResult("Safe to consume");
     					}				
-
     				}
     				else{
-    					f.setAllergyResult("No information available");
-    					
+    					f.setAllergyResult("No information available");    					
     				}
-    			
+        			f.setPatientAllergy(Allergy);
+        		    f.setPatientDisease(Disease);
+        			System.out.println("Food is her"+f.getPatientAllergy());    		
 
-    			System.out.println(f.toString());
-
-    		
+    			System.out.println("Food is her"+f.toString());    		
     		return f;
 
-    	}
-
+      }
 }

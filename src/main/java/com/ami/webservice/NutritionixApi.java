@@ -63,6 +63,7 @@ public class NutritionixApi {
 		String sugars = " ";
 		List<String> Disease = new ArrayList<String>();
 		Disease = p.getDisease();
+		Boolean flag= false;
 
 		/*********************************************************************************************************************************/
 		/*********************************
@@ -85,7 +86,7 @@ public class NutritionixApi {
 
 		/*********************************************/
 		/***************** Checking sugars *****************/
-		if (!sugars.equals("null")) {
+		if (!sugars.equals("null")||!(sugars.equals(" "))&&!sugars.equals("No information available")) {
 			MongoDBSugarDAO sugarDAO = new MongoDBSugarDAO(mongo);
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
@@ -130,13 +131,13 @@ public class NutritionixApi {
 				for (int i1 = 0; i1 < temp.getTime().size(); i1++) {
 					String time = temp.getTime().get(i1).toString();
 					if (time.contains(dateString)) {
-						if (!temp.getSugar().get(i1).equals(" "))
+						if (!temp.getSugar().get(i1).equals(" ")&&!temp.getSugar().get(i1).equals("No information available")&&!temp.getSugar().get(i1).equals("null"))
 							sugarTotal += Float.parseFloat(temp.getSugar().get(i1));
 					}
 				}
-				int year = Integer.parseInt(p.getBirthDate().substring(0, 3));
-				if ((p.getGender().equals("F") && (sugarTotal > 22) && (year < 1997))
-						|| (p.getGender().equals("M") && (sugarTotal > 36) && (year < 1997))
+				int year = Integer.parseInt(p.getBirthDate().substring(0, 4));
+				if ((p.getGender().equals("Female") && (sugarTotal > 22) && (year < 1997))
+						|| (p.getGender().equals("Male") && (sugarTotal > 36) && (year < 1997))
 						|| ((sugarTotal > 12) && (year > 1997))) {
 
 					sugarResult = "Exceeded the daily intake." + "\n" + " If you eat this " + product_name
@@ -178,12 +179,29 @@ public class NutritionixApi {
 		 *****************/
 
 		String ingredientString = food.getNf_ingredient_statement();
-
+		System.out.println(ingredientString);
+if(ingredientString.equals("null")||ingredientString.equals(null)){
+	System.out.println("Ingred is null");
+	f.setIngredients("No information available");
+	f.setAllergyResult("No information available");
+}
+else{
 		if (Allergy != null && Allergy.size() != 0) {
 			for (String a : Allergy) {
 
-				if (org.apache.commons.lang3.StringUtils.containsIgnoreCase(ingredientString, a)) {
-					f.setAllergyResult("Don't consume you are allergic to " + a);
+				if (org.apache.commons.lang3.StringUtils.containsIgnoreCase(ingredientString, a)){
+					flag=true;//break out of if statement
+					break;
+					
+				}
+			
+					else{
+						System.out.println("No Plese");
+					}
+				
+			}
+			if (flag==true){
+					f.setAllergyResult("Don't consume you are allergic to this food");
 					/********************
 					 * SMS Notification
 					 ***********************************/
@@ -211,8 +229,8 @@ public class NutritionixApi {
 					f.setAllergyResult("Safe to consume");
 
 			}
-
-		}
+		
+}
         return Response.status(Response.Status.CREATED).entity(f).build();
 
 	}

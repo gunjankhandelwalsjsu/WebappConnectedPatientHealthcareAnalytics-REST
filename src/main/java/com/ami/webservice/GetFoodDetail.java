@@ -79,9 +79,6 @@ public class GetFoodDetail {
         Boolean flag=false;
 		JSONObject object = new JSONObject();
 		float sugarTotal = 0;
-
-		// System.out.println(resp);
-
 		InputStream inputStream = null;
 		String result = "";
 
@@ -158,7 +155,6 @@ public class GetFoodDetail {
 
 				}else 
 				{
-					System.out.println("By chance");
 				
 					f.setNutriments("No information available");
 				}
@@ -169,7 +165,7 @@ public class GetFoodDetail {
 
 			/*********************************************/
 			/***************** Checking sugars *****************/
-			if (!sugars.equals("null")||!(sugars.equals(" "))) {
+			if (!sugars.equals("null")||!(sugars.equals(" "))&&!sugars.equals("No information available")) {
 				MongoDBSugarDAO sugarDAO = new MongoDBSugarDAO(mongo);
 				DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 				Calendar cal = Calendar.getInstance();
@@ -214,14 +210,12 @@ public class GetFoodDetail {
 					for (int i1 = 0; i1 < temp.getTime().size(); i1++) {
 						String time = temp.getTime().get(i1).toString();
 						if (time.contains(dateString)) {
-							if(!temp.getSugar().get(i1).equals(" "))
+							if(!temp.getSugar().get(i1).equals(" ")&&!temp.getSugar().get(i1).equals("No information available")&&!temp.getSugar().get(i1).equals("null"))
 							sugarTotal += Float.parseFloat(temp.getSugar().get(i1));
 						}
 					}
 					int year = Integer.parseInt(p.getBirthDate().substring(0, 4));
-					System.out.println(p.getBirthDate()+"my birth date"+year);
 					
-					System.out.println("sugarTotalssssss"+sugarTotal);
 					if ((p.getGender().equals("Female") && (sugarTotal > 22) && (year < 1997))
 							|| (p.getGender().equals("Male") && (sugarTotal > 36) && (year < 1997))
 							|| ((sugarTotal > 12) && (year > 1997))) {
