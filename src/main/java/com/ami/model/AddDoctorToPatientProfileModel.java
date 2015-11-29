@@ -9,6 +9,7 @@ package com.ami.model;
 public class AddDoctorToPatientProfileModel {
 
     String patientEmail;
+	String doctorEmail;
     public String getPatientEmail() {
 		return patientEmail;
 	}
@@ -21,7 +22,6 @@ public class AddDoctorToPatientProfileModel {
 	public void setDoctorEmail(String doctorEmail) {
 		this.doctorEmail = doctorEmail;
 	}
-	String doctorEmail;
 
    
 }

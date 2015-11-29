@@ -41,11 +41,11 @@ import com.twilio.sdk.TwilioRestException;
 import utility.SmsSender;
 
 @Path("/nutritionixApi")
-@Consumes({MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON})
+@Consumes({ MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON })
 @Produces("application/json")
 public class NutritionixApi {
 	@POST
-	@Path("/{email}")	
+	@Path("/{email}")
 	public Response food(@PathParam("email") String email, ProductFood food) throws IOException {
 		Response response;
 		Food f = new Food();
@@ -63,7 +63,7 @@ public class NutritionixApi {
 		String sugars = " ";
 		List<String> Disease = new ArrayList<String>();
 		Disease = p.getDisease();
-		Boolean flag= false;
+		Boolean flag = false;
 
 		/*********************************************************************************************************************************/
 		/*********************************
@@ -86,7 +86,7 @@ public class NutritionixApi {
 
 		/*********************************************/
 		/***************** Checking sugars *****************/
-		if (!sugars.equals("null")||!(sugars.equals(" "))&&!sugars.equals("No information available")) {
+		if (!sugars.equals("null") || !(sugars.equals(" ")) && !sugars.equals("No information available")) {
 			MongoDBSugarDAO sugarDAO = new MongoDBSugarDAO(mongo);
 			DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			Calendar cal = Calendar.getInstance();
@@ -131,7 +131,9 @@ public class NutritionixApi {
 				for (int i1 = 0; i1 < temp.getTime().size(); i1++) {
 					String time = temp.getTime().get(i1).toString();
 					if (time.contains(dateString)) {
-						if (!temp.getSugar().get(i1).equals(" ")&&!temp.getSugar().get(i1).equals("No information available")&&!temp.getSugar().get(i1).equals("null"))
+						if (!temp.getSugar().get(i1).equals(" ")
+								&& !temp.getSugar().get(i1).equals("No information available")
+								&& !temp.getSugar().get(i1).equals("null"))
 							sugarTotal += Float.parseFloat(temp.getSugar().get(i1));
 					}
 				}
@@ -180,27 +182,26 @@ public class NutritionixApi {
 
 		String ingredientString = food.getNf_ingredient_statement();
 		System.out.println(ingredientString);
-if(ingredientString.equals("null")||ingredientString.equals(null)){
-	System.out.println("Ingred is null");
-	f.setIngredients("No information available");
-	f.setAllergyResult("No information available");
-}
-else{
-		if (Allergy != null && Allergy.size() != 0) {
-			for (String a : Allergy) {
+		if (ingredientString.equals("null") || ingredientString.equals(null)) {
+			System.out.println("Ingred is null");
+			f.setIngredients("No information available");
+			f.setAllergyResult("No information available");
+		} else {
+			if (Allergy != null && Allergy.size() != 0) {
+				for (String a : Allergy) {
 
-				if (org.apache.commons.lang3.StringUtils.containsIgnoreCase(ingredientString, a)){
-					flag=true;//break out of if statement
-					break;
-					
-				}
-			
-					else{
+					if (org.apache.commons.lang3.StringUtils.containsIgnoreCase(ingredientString, a)) {
+						flag = true;// break out of if statement
+						break;
+
+					}
+
+					else {
 						System.out.println("No Plese");
 					}
-				
-			}
-			if (flag==true){
+
+				}
+				if (flag == true) {
 					f.setAllergyResult("Don't consume you are allergic to this food");
 					/********************
 					 * SMS Notification
@@ -229,13 +230,11 @@ else{
 					f.setAllergyResult("Safe to consume");
 
 			}
-		
-}
-        return Response.status(Response.Status.CREATED).entity(f).build();
+
+		}
+		return Response.status(Response.Status.CREATED).entity(f).build();
 
 	}
-
-	
 
 	private static String convertInputStreamToString(InputStream inputStream) throws IOException {
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));

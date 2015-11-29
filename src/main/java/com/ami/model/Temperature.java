@@ -6,6 +6,9 @@ import java.util.List;
 public class Temperature {
 
 	String email;
+	List<Double> temp;
+	String Id;
+
 	public List<Timestamp> getTime() {
 		return time;
 	}
@@ -19,7 +22,6 @@ public class Temperature {
 	public void setId(String id) {
 		Id = id;
 	}
-	String Id;
 	public String getEmail() {
 		return email;
 	}
@@ -32,6 +34,5 @@ public class Temperature {
 	public void setTemp(List<Double> temp) {
 		this.temp = temp;
 	}
-	List<Double> temp;
 	
 }

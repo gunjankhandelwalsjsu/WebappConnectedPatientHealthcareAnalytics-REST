@@ -26,77 +26,65 @@ import com.twilio.sdk.TwilioRestException;
 
 import utility.SmsSender;
 
-
 @Path("/temperatureAnalytics/")
 
 public class ThresholdTemperature {
-	
 
-	 @GET
-	 @Path("/{email}/{temperature}")
-     public void temperature(@PathParam("email")String email,@PathParam("temperature")Double temperature) {
-     	
-     	        
-     	        MongoClient mongo = (MongoClient) WebAppContext.WEBAPP_CONTEXT.getAttribute("MONGO_CLIENT");
-     	        MongoDBTemperatureDAO temperatureDAO = new MongoDBTemperatureDAO(mongo);
-     			MongoDBPatientDAO patientDAO = new MongoDBPatientDAO(mongo);
+	@GET
+	@Path("/{email}/{temperature}")
+	public void temperature(@PathParam("email") String email, @PathParam("temperature") Double temperature) {
 
-     	         Patient p = new Patient();
-     			System.out.println(email);
+		MongoClient mongo = (MongoClient) WebAppContext.WEBAPP_CONTEXT.getAttribute("MONGO_CLIENT");
+		MongoDBTemperatureDAO temperatureDAO = new MongoDBTemperatureDAO(mongo);
+		MongoDBPatientDAO patientDAO = new MongoDBPatientDAO(mongo);
 
-     			p = patientDAO.getPatient(email);
-     	       java.util.Date date= new java.util.Date();
-     	 	   System.out.println(new Timestamp(date.getTime()));
-     	 	   
-     	 	   if(temperature>100.00){
-     	 		 /********************
-					 * SMS Notification
-					 ***********************************/
-					String pName = p.getFirstName();
-					String pEmail = p.getEmail();
+		Patient p = new Patient();
+		System.out.println(email);
 
-					String dEmail = p.getDoctorMailId();
-					
-					String dPhone = p.getdPhone();
-					List<NameValuePair> params = new ArrayList<NameValuePair>();
-					params.add(new BasicNameValuePair("To", "+1" + dPhone));
-					params.add(new BasicNameValuePair("From", "+16509341358"));
-					params.add(new BasicNameValuePair("Body", "This is SMS NOTIFICATION TO intimate high temperature of value  "+temperature+" for PATIENT " + pName+" and email "+pEmail));
-					try {
-						SmsSender.sendSMS(params);
-					} catch (TwilioRestException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					}
-     	 	   
+		p = patientDAO.getPatient(email);
+		java.util.Date date = new java.util.Date();
 
-     	 	   if(!temperatureDAO.hasTemperature(email)){
-      	 		   Temperature tempObj=new Temperature();
-      	 		   List<Double> tempVal=new ArrayList<Double>();
-      	 		   tempVal.add(temperature);
-      	 		   tempObj.setTemp(tempVal);
-      	 		   tempObj.setEmail(email);
-      	 		   List<Timestamp> timestampVal=new ArrayList<Timestamp>();
-      	 		   timestampVal.add(new Timestamp(date.getTime()));
-      	 		   tempObj.setTime(timestampVal);
-      	 		   Temperature temp = temperatureDAO.createTemperature(tempObj);
-    	           //   return Response.status(Response.Status.CREATED).entity(temp).build();
+		if (temperature > 100.00) {
+			/********************
+			 * SMS Notification
+			 ***********************************/
+			String pName = p.getFirstName();
+			String pEmail = p.getEmail();
 
-      	 	   }
-    	 		else
-                 {
-     	 		//System.out.println( temperatureDAO.hasTemperature(email));
-     	           Temperature temp = temperatureDAO.getTemperature(email);
-     	           temp.getTemp().add(temperature);
-    	           temp.getTime().add(new Timestamp(date.getTime()));
-     	           temperatureDAO.updateTemperature(temp);
-     	          
-	          //  return Response.status(Response.Status.CREATED).entity(temp).build();
+			String dEmail = p.getDoctorMailId();
 
-     	 	   }
-     	 	   
-     	 	   
-     	       
-   			}
+			String dPhone = p.getdPhone();
+			List<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("To", "+1" + dPhone));
+			params.add(new BasicNameValuePair("From", "+16509341358"));
+			params.add(new BasicNameValuePair("Body", "This is SMS NOTIFICATION TO intimate high temperature of value  "
+					+ temperature + " for PATIENT " + pName + " and email " + pEmail));
+			try {
+				SmsSender.sendSMS(params);
+			} catch (TwilioRestException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+
+		if (!temperatureDAO.hasTemperature(email)) {
+			Temperature tempObj = new Temperature();
+			List<Double> tempVal = new ArrayList<Double>();
+			tempVal.add(temperature);
+			tempObj.setTemp(tempVal);
+			tempObj.setEmail(email);
+			List<Timestamp> timestampVal = new ArrayList<Timestamp>();
+			timestampVal.add(new Timestamp(date.getTime()));
+			tempObj.setTime(timestampVal);
+			Temperature temp = temperatureDAO.createTemperature(tempObj);
+
+		} else {
+			Temperature temp = temperatureDAO.getTemperature(email);
+			temp.getTemp().add(temperature);
+			temp.getTime().add(new Timestamp(date.getTime()));
+			temperatureDAO.updateTemperature(temp);
+
+		}
+
+	}
 }
